@@ -1138,6 +1138,11 @@ func (m *PodMounter) buildMountPod(name, volumeID, sourceType, sourceID, mountPa
 						Name:      "cache-dir",
 						MountPath: m.cacheDir,
 					},
+					{
+						Name:      "cluster-ca-certs",
+						MountPath: "/usr/local/share/ca-certificates",
+						ReadOnly:  true,
+					},
 				},
 				Resources: BuildResourceRequirements(resources, DefaultMountCPURequest, DefaultMountMemoryRequest),
 			}},
@@ -1157,6 +1162,17 @@ func (m *PodMounter) buildMountPod(name, volumeID, sourceType, sourceID, mountPa
 						HostPath: &corev1.HostPathVolumeSource{
 							Path: m.cacheDir,
 							Type: ptr.To(corev1.HostPathDirectoryOrCreate),
+						},
+					},
+				},
+				{
+					Name: "cluster-ca-certs",
+					VolumeSource: corev1.VolumeSource{
+						ConfigMap: &corev1.ConfigMapVolumeSource{
+							LocalObjectReference: corev1.LocalObjectReference{
+								Name: "cluster-ca-certs",
+							},
+							Optional: ptr.To(true),
 						},
 					},
 				},
