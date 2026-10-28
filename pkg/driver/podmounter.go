@@ -1104,7 +1104,7 @@ func (m *PodMounter) buildMountPod(name, volumeID, sourceType, sourceID, mountPa
 				Name:            "hf-mount",
 				Image:           m.image,
 				ImagePullPolicy: m.imagePullPolicy,
-				Command:         []string{hfMountBinary},
+				Command:         []string{"/bin/sh", "-c", "update-ca-certificates 2>/dev/null || true; exec " + hfMountBinary + ` "$@"`, "--"},
 				Args:            args,
 				Env: func() []corev1.EnvVar {
 					env := []corev1.EnvVar{
